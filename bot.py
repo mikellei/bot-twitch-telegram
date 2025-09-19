@@ -16,6 +16,21 @@ from telegram.ext import Updater, CommandHandler
 from telegram import Bot
 import os # Assicurati che questa riga sia all'inizio del file, con gli altri import
 
+# --- CODICE PER TENERE IL BOT ATTIVO 24/7 ---
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "Il bot è vivo!"
+
+def run():
+  app.run(host='0.0.0.0',port=8080)
+
+def keep_alive():
+    t = Thread(target=run)
+    t.start()
+# -----------------------------------------
+
 # --- CONFIGURAZIONE: Legge le chiavi dall'ambiente del server ---
 TELEGRAM_TOKEN = os.environ.get('TELEGRAM_TOKEN')
 TWITCH_CLIENT_ID = os.environ.get('TWITCH_CLIENT_ID')
@@ -164,8 +179,10 @@ def daily_check():
 
 # --- AVVIO DEL BOT ---
 if __name__ == '__main__':
+    keep_alive() # <-- AGGIUNGI QUESTA RIGA
     print("Avvio del bot vFINAL in corso...")
     db_connection = setup_database()
+    # ... resto del codice ...
     
     updater = Updater(TELEGRAM_TOKEN, use_context=True)
     dispatcher = updater.dispatcher
